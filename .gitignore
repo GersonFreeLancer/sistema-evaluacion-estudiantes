@@ -39,3 +39,4 @@ build/
 
 # Ignorar conexión de base de datos
 src/main/java/org/example/utils/DatabaseConnection.java
+src/main/java/org/example/Msin.java
