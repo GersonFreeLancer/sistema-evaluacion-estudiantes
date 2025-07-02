@@ -1,4 +1,4 @@
-package org.Admision.SanMarcos.service;
+package org.example.service;
 
 import java.util.concurrent.ThreadLocalRandom;
 
