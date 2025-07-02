@@ -1,42 +1,45 @@
 package org.example.service;
 
+import org.example.models.Respuestas;
 import org.example.models.ResultadoExamen;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-
+import java.time.LocalDateTime;
 
 public class EvaluatorsService {
 
-    public static ResultadoExamen calcularResultado(DatosPostulante dato, String clave) {
-        String respuestas = dato.getRespuesta();
-        int correctas = 0, incorrectas = 0, nulas = 0;
-        double puntaje = 0;
-
-        for (int i = 0; i < clave.length(); i++) {
-            char respuesta = respuestas.charAt(i);
-            char correcta = clave.charAt(i);
-
-            if (respuesta == '*') {
-                nulas++;
-            } else if (respuesta == correcta) {
-                correctas++;
-                puntaje += 20;
-            } else {
-                incorrectas++;
-                puntaje -= 1.275;
-            }
+    public static ResultadoExamen calcularResultado(Respuestas respuestas, String clave) {
+        if (respuestas == null || clave == null || clave.length() != 100) {
+            throw new IllegalArgumentException("Respuestas o clave inválidas.");
         }
 
-        ResultadoExamen resultado = new ResultadoExamen();
-        resultado.setCodigoPostulante(dato.getCodigo());
-        resultado.setPuntaje(Math.round(puntaje * 100.0) / 100.0);
-        resultado.setMerito(""); // puedes calcular después por ordenamiento
+        int correctas = respuestas.contarRespuestasCorrectas(clave);
+        int incorrectas = respuestas.contarRespuestasIncorrectas(clave);
+        int nulas = respuestas.contarRespuestasNulas();
+
+        double puntaje = (correctas * 20.0) - (incorrectas * 1.275);
+
+        // Redondear a 2 decimales
+        BigDecimal bd = new BigDecimal(puntaje).setScale(2, RoundingMode.HALF_UP);
+        puntaje = bd.doubleValue();
+
+        ResultadoExamen resultado = new ResultadoExamen(respuestas.getCodigoPostulante());
+        resultado.setPuntaje(puntaje);
         resultado.setRespuestasCorrectas(correctas);
         resultado.setRespuestasIncorrectas(incorrectas);
         resultado.setRespuestasNulas(nulas);
-        resultado.setObservacion(ResultadoExamen.ObservacionEnum.fromPuntaje(puntaje));
-        resultado.setFechaEvaluacion(java.time.LocalDateTime.now());
+        resultado.setFechaEvaluacion(LocalDateTime.now());
+
+        // Observación simple
+        if (puntaje == 0.0) {
+            resultado.setObservacion(ResultadoExamen.ObservacionEnum.NO_SE_PRESENTO);
+        } else {
+            resultado.setObservacion(ResultadoExamen.ObservacionEnum.ALCANZANTE);
+        }
+
+        // Mérito se puede calcular luego por ordenamiento
+        resultado.setMerito("");
 
         return resultado;
     }
