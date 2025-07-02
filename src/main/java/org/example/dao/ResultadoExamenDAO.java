@@ -1,9 +1,8 @@
 package org.example.dao;
-
 import org.example.models.ResultadoExamen;
 import org.example.utils.DatabaseConnection;
 import java.sql.*;
-        import java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
