@@ -36,3 +36,6 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+# Ignorar conexión de base de datos
+src/main/java/org/example/utils/DatabaseConnection.java
