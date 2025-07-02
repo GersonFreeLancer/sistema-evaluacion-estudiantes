@@ -16,7 +16,7 @@ public class GeneratorService {
     private static char generarRespuestaPonderada() {
         int aciertos = ThreadLocalRandom.current().nextInt(0, 10);
         int rand = ThreadLocalRandom.current().nextInt(100); // [0, 99]
-        if (aciertos < 8) {
+        if (aciertos < 9) {
             if (rand < 25) {
                 return 'A';
             } else if (rand < 50) { // 15 + 25
